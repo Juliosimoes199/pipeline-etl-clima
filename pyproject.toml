@@ -1,0 +1,24 @@
+[project]
+name = "tutorial-eng-dados"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Juliosimoes199", email = "juliocesarsimoes100@gmail.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "apache-airflow>=3.4.0",
+    "pandas>=3.1.1",
+    "psycopg2-binary>=2.9.13",
+    "python-dotenv>=1.2.4",
+    "requests>=2.34.2",
+    "sqlalchemy>=2.1.8",
+]
+
+[project.scripts]
+tutorial-eng-dados = "tutorial_eng_dados:main"
+
+[build-system]
+requires = ["uv_build>=0.13.1,<0.14.0"]
+build-backend = "uv_build"
