@@ -5,10 +5,9 @@ from dotenv import load_dotenv
 import sys, os
 
 
-sys.path.insert(0, '/opt/airflow/src') # Registrar o nosso caminho do src dentro do ambiente de desenvolvimento
+sys.path.insert(0, '/opt/airflow/src')
 
-# Os imports de pandas/sqlalchemy ficam DENTRO das tasks: assim o dag-processor
-# não carrega bibliotecas pesadas a cada vez que lê este ficheiro.
+
 
 env_path = Path(__file__).resolve().parent.parent / "config" / ".env"
 load_dotenv(env_path)
@@ -20,15 +19,15 @@ url = f'https://api.openweathermap.org/data/2.5/weather?q=Sao Paulo,BR&units=met
 @dag(
     dag_id="youtube_tutorial",
     default_args={
-        "owner": "airflow", # O responsavel
-        "depends_on_past":False, # A tarefa de hoje depende de ontem para rodar? False: Não
-        "retries":2, # Duas tentativas se caso der erro
-        "retry_delay":timedelta(minutes=5) # Com um tempo de espera de 5 minutos
+        "owner": "airflow",
+        "depends_on_past":False,
+        "retries":2, 
+        "retry_delay":timedelta(minutes=5) 
     },
-    description= "Pipeline ETL - Clima SP", # Descrição
-    schedule= "0 */1 * * * ", # 0 -> minuto; */1 -> hora; * -> dia do mês; * -> é o mês; * -> dia da semana
-    start_date=datetime(2026, 11, 7), # O dia que estou construindo o fluxo
-    catchup=False, # Não quero que rode execuções passadas
+    description= "Pipeline ETL - Clima SP",
+    schedule= "0 */1 * * * ", 
+    start_date=datetime(2026, 11, 7), 
+    catchup=False, 
     tags = ["weather", "etl", "Bora pra cima"]
 )
 
@@ -42,7 +41,7 @@ def weather_pipeline():
     def transform():
         from transform_data import data_transformations
         df = data_transformations()
-        df.to_parquet("/opt/airflow/data/temp_data.parquet", index=False) # persistindo os dados porque as task não conseguem se comunicar cada task roda de forma isolada
+        df.to_parquet("/opt/airflow/data/temp_data.parquet", index=False)
         
     @task
     def save():
