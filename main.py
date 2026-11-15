@@ -29,14 +29,12 @@ def pipeline():
         load_weather_data(table_name, df)
         
         print("\n" + "="*60)
-        print("✅ Pipeline concluído com sucesso!")
+        print("Pipeline concluído com sucesso!")
         print("="*60)
         
     except Exception as e:
-        logging.error(f"❌ ERRO no Pipeline: {e}")
+        logging.error(f"ERRO no Pipeline: {e}")
         import traceback
         traceback.print_exc()
     
 pipeline()
-
-# Parei no minuto 52:00
