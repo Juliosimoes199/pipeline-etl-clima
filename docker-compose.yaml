@@ -1,8 +1,4 @@
-# Airflow "leve" para estudo local: LocalExecutor (sem Redis / Celery worker).
-# Baseado no docker-compose oficial do Airflow 3.1.7, ajustado para máquinas com ~8GB de RAM.
-#
-# Variáveis lidas do .env (na raiz do projeto):
-#   AIRFLOW_UID - o teu user id no Linux (comando: id -u)
+
 ---
 x-airflow-common:
   &airflow-common
@@ -11,17 +7,16 @@ x-airflow-common:
     - ${ENV_FILE_PATH:-.env}
   environment:
     &airflow-common-env
-    # LocalExecutor: as tasks rodam como subprocessos do scheduler.
-    # Elimina o Redis e o celery worker (que abria 16 processos e usava ~2GB).
+
     AIRFLOW__CORE__EXECUTOR: LocalExecutor
     AIRFLOW__CORE__AUTH_MANAGER: airflow.providers.fab.auth_manager.fab_auth_manager.FabAuthManager
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
     AIRFLOW__CORE__FERNET_KEY: ''
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
-    # Não carregar as ~80 DAGs de exemplo (eram a principal carga do dag-processor)
+
     AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
     AIRFLOW__CORE__EXECUTION_API_SERVER_URL: 'http://airflow-apiserver:8080/execution/'
-    # Limites de paralelismo adequados para uma máquina pequena
+
     AIRFLOW__CORE__PARALLELISM: '4'
     AIRFLOW__CORE__MAX_ACTIVE_TASKS_PER_DAG: '4'
     AIRFLOW__DAG_PROCESSOR__PARSING_PROCESSES: '1'
@@ -31,7 +26,7 @@ x-airflow-common:
     AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: 'true'
     _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-}
     AIRFLOW_CONFIG: '/opt/airflow/config/airflow.cfg'
-    # Postgres instalado no teu PC (fora do docker), onde a DAG grava os dados
+
     DB_HOST: host.docker.internal
   volumes:
     - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags
@@ -99,8 +94,7 @@ services:
   airflow-dag-processor:
     <<: *airflow-common
     command: dag-processor
-    # O healthcheck oficial ("airflow jobs check") abre uma CLI completa do Airflow
-    # a cada 30s (~300MB e muita CPU cada vez). Verificamos só se o processo existe.
+
     healthcheck:
       test: ["CMD-SHELL", "grep -qa dag-processor /proc/1/cmdline"]
       interval: 60s
@@ -113,8 +107,7 @@ services:
       airflow-init:
         condition: service_completed_successfully
 
-  # O triggerer só é preciso para operadores "deferrable" (o teu pipeline não usa).
-  # Para ligar: docker compose --profile triggerer up -d
+
   airflow-triggerer:
     <<: *airflow-common
     command: triggerer
