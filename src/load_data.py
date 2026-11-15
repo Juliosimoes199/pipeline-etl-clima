@@ -1,5 +1,5 @@
-from sqlalchemy import create_engine, text # Para se conectar com o banco de dados
-from urllib.parse import quote_plus # Para garantir segurança na interpretação da nossa senha de banco de dados
+from sqlalchemy import create_engine, text 
+from urllib.parse import quote_plus 
 import os
 from pathlib import Path
 import pandas as pd
@@ -15,8 +15,6 @@ load_dotenv(env_path)
 user = os.getenv("user")
 password = os.getenv("password")
 database = os.getenv("database")
-# Dentro do Docker, "localhost" é o próprio container. O compose define
-# DB_HOST=host.docker.internal para chegar ao Postgres do teu PC.
 host = os.getenv("DB_HOST", "localhost")
 
 def get_engine():
